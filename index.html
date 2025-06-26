@@ -1,0 +1,129 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Meet & Greet Booking - Morgan Wallen</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f0e1, #d9cbb5);
+      margin: 0; padding: 40px;
+      color: #3b2d1f;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    form {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff8ec;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(122, 93, 53, 0.3);
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 18px;
+      border: 1.5px solid #c9b484;
+      border-radius: 8px;
+      font-size: 16px;
+      font-family: inherit;
+      transition: border-color 0.3s ease;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #7a5d35;
+      outline: none;
+    }
+    button {
+      width: 100%;
+      background: #7a5d35;color: white;
+      padding: 14px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #a2824e;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Meet & Greet Booking - Morgan Wallen</h1>
+
+<form id="bookingForm">
+  <label for="fullName">Full Name *</label>
+  <input type="text" id="fullName" name="fullName" required />
+
+  <label for="email">Email Address *</label>
+  <input type="email" id="email" name="email" required />
+
+  <label for="favoriteSong">Favorite Morgan Wallen Song</label>
+  <input type="text" id="favoriteSong" name="favoriteSong" placeholder="Optional" />
+
+  <label for="packageSelected">Select Package *</label>
+  <select id="packageSelected" name="packageSelected" required>
+    <option value="" disabled selected>Select your option</option>
+    <option value="Regular - 500">Regular -500</option>
+    <option value="Special - 1000">Special -1000</option>
+    <option value="Gold - 1500">Gold -1500</option>
+    <option value="VIP Exclusive - 2000">VIP Exclusive -2000</option>
+  </select>
+
+  <label for="message">Message to Morgan</label>
+  <textarea id="message" name="message" rows="4" placeholder="Optional"></textarea><button type="submit">Submit Booking</button>
+</form>
+
+<script>
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbwnt5hUO32RtEoK-Sz90OVj9LBqOo0ZXS87yhzmm_pUwgZhCkKww6lG5NDMlgZM8H6RLQ/exec';
+
+  document.getElementById('bookingForm').addEventListener('submit', e => {
+    e.preventDefault();
+
+    const formData = {
+      fullName: e.target.fullName.value.trim(),
+      email: e.target.email.value.trim(),
+      favoriteSong: e.target.favoriteSong.value.trim(),
+      packageSelected: e.target.packageSelected.value,
+      message: e.target.message.value.trim()
+    };
+
+    if (!formData.fullName || !formData.email || !formData.packageSelected) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+
+    if (!confirm('Confirm submission?')) return;
+
+    fetch(scriptURL, {
+      method: 'POST',
+      body: JSON.stringify(formData),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if(data.status === 'success') {
+        alert('Booking submitted successfully! Morgan will see it soon.');
+        e.target.reset();
+      } else {
+        alert('Submission failed. Please try again later.');
+      }
+    }).catch(() => alert('Something went wrong. Please try again later.'));
+  });
+</script>
+
+</body>
+</html>
