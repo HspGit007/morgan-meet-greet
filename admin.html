@@ -1,0 +1,116 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Panel - Submissions</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #444;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    #loginBox {
+      text-align: center;
+      margin-top: 50px;
+    }
+    input[type="password"] {
+      padding: 10px;
+      font-size: 16px;
+      width: 250px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="loginBox">
+  <h1>Admin Login</h1>
+  <input type="password" id="passwordInput" placeholder="Enter admin password" />
+  <button onclick="checkPassword()">Login</button>
+</div><div id="adminPanel" style="display:none;">
+  <h1>Meet & Greet Submissions</h1>
+  <table id="submissionsTable">
+    <thead>
+      <tr>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>Favorite Song</th>
+        <th>Package</th>
+        <th>Message</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+  const API_KEY = 'AIzaSyB5ItkeaFaop6aUcb8r_Dyx28AtwSoIXvI';
+  const SHEET_ID = '1cmrKymDD1pbGtghbm2X8XXBRnHu7XaY2aFNkUiJUNmQ';
+  const SHEET_NAME = 'Morgan Wallen';
+  const ADMIN_PASSWORD = 'HspWallen123';
+
+  function checkPassword() {
+    const input = document.getElementById('passwordInput').value;
+    if (input === ADMIN_PASSWORD) {
+      document.getElementById('loginBox').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'block';
+      fetchData();
+    } else {
+      alert('Incorrect password.');
+    }
+  }
+
+  function fetchData() {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/SHEET_ID/values/{SHEET_NAME}?key=${API_KEY}`;
+
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        const rows = data.values.slice(1); // Skip header
+        const tableBody = document.querySelector('#submissionsTable tbody');
+        tableBody.innerHTML = '';rows.forEach(row => {
+          const tr = document.createElement('tr');
+          for (let i = 0; i < 5; i++) {
+            const td = document.createElement('td');
+            td.textContent = row[i] || '';
+            tr.appendChild(td);
+          }
+          tableBody.appendChild(tr);
+        });
+      })
+      .catch(err => {
+        console.error('Fetch error:', err);
+        alert('Failed to load submissions.');
+      });
+  }
+</script>
+
+</body>
+</html>
